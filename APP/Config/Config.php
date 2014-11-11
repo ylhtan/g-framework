@@ -9,7 +9,7 @@ return array(
     'default_group' => 'Home',
     //默认模板后缀
     'view_suffix' => '.html',
-    //默认URL模式（1为原始模式，2为PATHINFO模式）
+    //默认URL模式（1为原始模式，2为PATHINFO模式，3为CLI模式）
     'url_model' => 2,
     //地址分隔符
     'url_separator' => '/',

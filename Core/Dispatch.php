@@ -36,6 +36,7 @@ class Dispatch {
      */
     private function _parseUrl() {
         if ($this->url_model == 1) $this->_parse1();
+        else if ($this->url_model == 3) $this->_parse3();
         else $this->_parse2();
         //将g、m首字母小写转为大写
         $this->group_name = ucfirst($this->group_name);
@@ -81,6 +82,42 @@ class Dispatch {
             $request_uri = str_replace('&',$this->url_separator, $request_uri);
             $request_uri = trim($request_uri, '/');
             $path_array = explode($this->url_separator,$request_uri);
+            $param_count = count($path_array);
+            //根据参数个数来判断是否定义了分组
+            if (is_even($param_count)) {
+                $this->group_name = C('default_group');  //参数为偶数则为默认分组
+            }
+            else {
+                $this->group_name = $path_array[0];  //参数为奇数则第一个参数为分组
+                array_shift($path_array);  //弹出第一个数组元素
+            }
+            $this->module_name = isset($path_array[0]) ? $path_array[0] : 'Index';
+            $this->action_name = isset($path_array[1]) ? $path_array[1] : 'index';
+            if ($param_count>=4) {
+                // 从 key = 2 开始获取参数
+                for ($i = 2; $i <= floor($param_count/2); $i++) {
+                    $_GET[$path_array[($i-1)*2]] = $path_array[($i-1)*2+1];
+                }
+            }
+        }
+    }
+    
+    /**
+     * CLI模式解析URL
+     */
+    private function _parse3() {
+        //适用于 php index.php
+        //及适用于 php index.php index index 和 php index.php index index a 1 b 2 的情况
+        $count = count($_SERVER['argv']);
+        if ($count == 1) {
+            $this->group_name = C('default_group');
+            $this->module_name = 'Index';
+            $this->action_name = 'index';
+        }
+        else {
+            foreach ($_SERVER['argv'] as $k=>$v) {
+                if ($k > 0) $path_array[] = $v;
+            }
             $param_count = count($path_array);
             //根据参数个数来判断是否定义了分组
             if (is_even($param_count)) {
@@ -226,18 +263,19 @@ class Dispatch {
      * 定义系统常量
      */
     private function define_GF_constant() {
-        define('__ROOT__', 'http://'.$_SERVER['HTTP_HOST']); //根目录URL路径
-        define('__GROUP__', __ROOT__.'/'.$this->group_name.'/');
-        if ($this->group_name == C('default_group')) {
-            define('__URL__', __ROOT__.'/'.$this->module_name.'/');
-            define('__ACTION__', __ROOT__.'/'.$this->module_name.'/'.$this->action_name);
-        }
-        else {
-            define('__URL__', __ROOT__.'/'.$this->group_name.'/'.$this->module_name.'/');
-            define('__ACTION__', __ROOT__.'/'.$this->group_name.'/'.$this->module_name.'/'.$this->action_name);
-        }
-        define('__SELF__', __ROOT__.$_SERVER['REQUEST_URI']);
-        
+        if ($this->url_model != 3) {
+            define('__ROOT__', 'http://'.$_SERVER['HTTP_HOST']); //根目录URL路径
+            define('__GROUP__', __ROOT__.'/'.$this->group_name.'/');
+            if ($this->group_name == C('default_group')) {
+                define('__URL__', __ROOT__.'/'.$this->module_name.'/');
+                define('__ACTION__', __ROOT__.'/'.$this->module_name.'/'.$this->action_name);
+            }
+            else {
+                define('__URL__', __ROOT__.'/'.$this->group_name.'/'.$this->module_name.'/');
+                define('__ACTION__', __ROOT__.'/'.$this->group_name.'/'.$this->module_name.'/'.$this->action_name);
+            }
+            define('__SELF__', __ROOT__.$_SERVER['REQUEST_URI']);
+        }        
         define('GROUP_NAME', $this->group_name);
         define('MODULE_NAME', $this->module_name);
         define('ACTION_NAME', $this->action_name);
