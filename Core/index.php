@@ -21,7 +21,6 @@ define('APP_CONFIG_PATH', APP_PATH.'/Config');
 define('APP_CONFIG_FILE', APP_PATH.'/Config/Config.php');
 define('GF_CONFIG_FILE', CORE_PATH.'/Core/Config.php');
 define('LIBRARY_PATH', CORE_PATH.'/Library');
-define('__ROOT__', 'http://'.$_SERVER['HTTP_HOST']); //根目录URL路径
 define('GF_VERSION', '1.0.0'); //框架版本号
 define('GF_RELEASE', '2014年11月8日'); //框架发布时间
 

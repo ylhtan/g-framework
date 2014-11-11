@@ -226,6 +226,7 @@ class Dispatch {
      * 定义系统常量
      */
     private function define_GF_constant() {
+        define('__ROOT__', 'http://'.$_SERVER['HTTP_HOST']); //根目录URL路径
         define('__GROUP__', __ROOT__.'/'.$this->group_name.'/');
         if ($this->group_name == C('default_group')) {
             define('__URL__', __ROOT__.'/'.$this->module_name.'/');
