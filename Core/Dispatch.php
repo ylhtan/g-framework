@@ -75,7 +75,11 @@ class Dispatch {
         else {
             //支持URL路由
             $request_uri = $this->special_url($request_uri);
-            //兼容搜素模式
+            //兼容首页传参模式 for example : /?status=ok 将被转化为 /Index/index/status/ok
+            if (substr($request_uri, 0, 2) == '/?') {
+                $request_uri = str_replace('/?','/Index'.$this->url_separator.'index'.$this->url_separator, $request_uri);
+            }
+            //兼容搜素模式 for example : /search/index?keyword=abc
             $request_uri = str_replace('?&',$this->url_separator, $request_uri);
             $request_uri = str_replace('?',$this->url_separator, $request_uri);
             $request_uri = str_replace('=',$this->url_separator, $request_uri);
