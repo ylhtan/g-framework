@@ -21,8 +21,6 @@ class GF_Controller {
         $this->module_name = $_GET['m'];
         $this->action_name = $_GET['a'];
         $this->View = new GF_View($this->group_name, $this->module_name, $this->action_name);
-        global $DB_CONN_STATUS; //注册全局变量控制数据库只连一次
-        $DB_CONN_STATUS = false;
         //统计框架执行时间
         global $CORE_START_TIME;
         $CORE_END_TIME = microtime(true);

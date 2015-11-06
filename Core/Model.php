@@ -12,7 +12,7 @@ class GF_Model {
     protected $tableName;
     protected $trueTableName;
     protected $db_prefix;
-    protected $DB;
+    private static $DB;
     public $error;
     public $lastSql;
 
@@ -25,10 +25,12 @@ class GF_Model {
         $this->trueTableName = $this->db_prefix.$this->tableName;
         $this->sql_bk = $this->sql = str_replace('{table}', $this->trueTableName, $this->sql);
         //实例化DB类
-        $this->DB = new GF_DB();
-        global $DB_CONN_STATUS;
-        if ($DB_CONN_STATUS === false) {
-            if ($this->DB->connect()) $DB_CONN_STATUS = true;
+        $mysql_config = getMysqlConfig();
+        if ($mysql_config !== FALSE) {
+            if (self::$DB == null) {
+                self::$DB = new GF_DB();
+                self::$DB->connect();
+            }
         }
     }
 
@@ -109,14 +111,14 @@ class GF_Model {
     public function select() {
         $this->sql = $this->endSql($this->sql);
         $this->lastSql = $this->sql;
-        $data = $this->DB->_query($this->sql, $this->trueTableName);
+        $data = self::$DB->_query($this->sql, $this->trueTableName);
         if ($data != false) {
             $this->sqlRevert();
             return $data;
         }
         else {
             $this->sqlRevert();
-            $this->error = $this->DB->getError();
+            $this->error = self::$DB->getError();
             return false;
         }
     }
@@ -131,14 +133,14 @@ class GF_Model {
         $this->limit('0,1');
         $this->sql = $this->endSql($this->sql);
         $this->lastSql = $this->sql;
-        $data = $this->DB->_query($this->sql, $this->trueTableName);
+        $data = self::$DB->_query($this->sql, $this->trueTableName);
         if ($data != false) {
             $this->sqlRevert();
             return $data[0];
         }
         else {
             $this->sqlRevert();
-            $this->error = $this->DB->getError();
+            $this->error = self::$DB->getError();
             return false;
         }
     }
@@ -263,9 +265,9 @@ class GF_Model {
         $sql = str_replace('{keys}', $keys, $sql);
         $sql = str_replace('{values}', $values, $sql);
         $this->lastSql = $sql;
-        if ($this->DB->execute($sql)) return mysql_insert_id();
+        if (self::$DB->execute($sql)) return mysql_insert_id();
         else {
-            $this->error = $this->DB->getError();
+            $this->error = self::$DB->getError();
             return false;
         }
     }
@@ -289,9 +291,9 @@ class GF_Model {
         $where = $this->parseWhere($condition);
         $sql = str_replace('{where}', $where, $sql);
         $this->lastSql = $sql;
-        if ($this->DB->execute($sql)) return true;
+        if (self::$DB->execute($sql)) return true;
         else {
-            $this->error = $this->DB->getError();
+            $this->error = self::$DB->getError();
             return false;
         }
     }
@@ -302,26 +304,28 @@ class GF_Model {
      * @param <array> $condition 删除条件
      */
     public function delete($condition=null) {
-        $sql = 'delete from `{table}` {where}';
+        $sql = '{delete} from `{table}` {where}';
         $sql = str_replace('{table}', $this->trueTableName, $sql);
         $where = $this->parseWhere($condition);
         $sql = str_replace('{where}', $where, $sql);
         //传入条件不能为空
         if (empty($condition)) {
+            $sql = str_replace('{delete}', 'delete', $sql);
             $this->lastSql = $sql;
             $this->error = '为保证数据不被误删，请传入删除条件！';
             return false;
         }
         //查询数据库是否有此条记录
-        $countSql = str_replace('delete', 'select count(*) as count', $sql);
+        $countSql = str_replace('{delete}', 'select count(*) as count', $sql);
         $res = $this->query($countSql);
         $row = mysql_fetch_array($res);
         $count = $row['count'];
+        $sql = str_replace('{delete}', 'delete', $sql);
         $this->lastSql = $sql;
         if ($count > 0) {
-            if ($this->DB->execute($sql)) return true;
+            if (self::$DB->execute($sql)) return true;
             else {
-                $this->error = $this->DB->getError();
+                $this->error = self::$DB->getError();
                 return false;
             }
         }

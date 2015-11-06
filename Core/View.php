@@ -156,24 +156,24 @@ class GF_View {
         $content = preg_replace('/<volist name="([a-zA-Z][a-zA-Z0-9_-]*)" id="([a-zA-Z][a-zA-Z0-9_-]*)">/','<?php foreach (\$\\1 as \$key=>\$\\2) { ?>', $content); //匹配格式如：<volist name="list" id="vo">
         $content = preg_replace('/<volist name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" id="([a-zA-Z][a-zA-Z0-9_-]*)">/','<?php foreach (\$\\1["\\2"] as \$key1=>\$\\3) { ?>', $content); //匹配格式如：<volist name="list.sub" id="sub">
         $content = preg_replace('/<\/volist>/','<?php }?>', $content); //匹配格式如：</volist>
-        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1 == "\\2") {?>', $content); //匹配格式如：<eq name="username" value="abc">
-        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1["\\2"] == "\\3") {?>', $content); //匹配格式如：<eq name="user.name" value="abc">
-        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1["\\2"] == \\3) { ?>', $content); //匹配格式如：<eq name="vo.id" value="$uid">
-        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1 != "\\2") {?>', $content); //匹配格式如：<neq name="username" value="abc">
-        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1["\\2"] != "\\3") {?>', $content); //匹配格式如：<neq name="user.name" value="abc">
-        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1["\\2"] != \\3) { ?>', $content); //匹配格式如：<neq name="vo.id" value="$uid">
-        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1 == "\\2") {?>', $content); //匹配格式如：<if name="username" value="abc">
-        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (\$\\1["\\2"] == "\\3") {?>', $content); //匹配格式如：<if name="user.id" value="1">
-        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1["\\2"] == \\3) { ?>', $content); //匹配格式如：<if name="vo.id" value="$uid">
-        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1["\\2"] == \\3["\\4"]) { ?>', $content); //匹配格式如：<if name="user.id" value="$vo.id">
-        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1 == \\2) { ?>', $content); //匹配格式如：<if name="key" value="$sid">
-        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (\$\\1["\\2"] == \\3["\\4"]) { ?>', $content); //匹配格式如：<eq name="user.id" value="$vo.id">
+        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1) && \$\\1 == "\\2") {?>', $content); //匹配格式如：<eq name="username" value="abc">
+        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] == "\\3") {?>', $content); //匹配格式如：<eq name="user.name" value="abc">
+        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] == \\3) { ?>', $content); //匹配格式如：<eq name="vo.id" value="$uid">
+        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1) && \$\\1 != "\\2") {?>', $content); //匹配格式如：<neq name="username" value="abc">
+        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] != "\\3") {?>', $content); //匹配格式如：<neq name="user.name" value="abc">
+        $content = preg_replace('/<neq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] != \\3) { ?>', $content); //匹配格式如：<neq name="vo.id" value="$uid">
+        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1) && \$\\1 == "\\2") {?>', $content); //匹配格式如：<if name="username" value="abc">
+        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="([a-zA-Z0-9._-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] == "\\3") {?>', $content); //匹配格式如：<if name="user.id" value="1">
+        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && \$\\1["\\2"] == \\3) { ?>', $content); //匹配格式如：<if name="vo.id" value="$uid">
+        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && isset(\\3["\\4"]) && \$\\1["\\2"] == \\3["\\4"]) { ?>', $content); //匹配格式如：<if name="user.id" value="$vo.id">
+        $content = preg_replace('/<if name="([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1) && isset(\\2) && \$\\1 == \\2) { ?>', $content); //匹配格式如：<if name="key" value="$sid">
+        $content = preg_replace('/<eq name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)" value="(\$[a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && isset(\\3["\\4"]) && \$\\1["\\2"] == \\3["\\4"]) { ?>', $content); //匹配格式如：<eq name="user.id" value="$vo.id">
         $content = preg_replace('/<\/else>/', '<?php } else { ?>', $content); //匹配格式如：</else>
         $content = preg_replace('/<\/eq>|<\/neq>|<\/if>|<\/empty>|<\/notempty>/', '<?php }?>', $content); //匹配格式如：</eq> 或 </neq></if></empty>
-        $content = preg_replace('/<empty name="([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (empty(\$\\1)) {?>', $content); //匹配格式如：<empty name="username"></empty>
-        $content = preg_replace('/<empty name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (empty(\$\\1["\\2"])) {?>', $content); //匹配格式如：<empty name="user.name"></empty>
-        $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (!empty(\$\\1)) {?>', $content); //匹配格式如：<notempty name="username"></empty>
-        $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (!empty(\$\\1["\\2"])) {?>', $content); //匹配格式如：<notempty name="user.name"></empty>
+        $content = preg_replace('/<empty name="([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (!isset(\$\\1) || empty(\$\\1)) {?>', $content); //匹配格式如：<empty name="username"></empty>
+        $content = preg_replace('/<empty name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (!isset(\$\\1["\\2"]) || empty(\$\\1["\\2"])) {?>', $content); //匹配格式如：<empty name="user.name"></empty>
+        $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1) && !empty(\$\\1)) {?>', $content); //匹配格式如：<notempty name="username"></empty>
+        $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && !empty(\$\\1["\\2"])) {?>', $content); //匹配格式如：<notempty name="user.name"></empty>
         $content = preg_replace('/{__RUNTIME__}/', '<?php 
         global $START_TIME;
         $END_TIME = microtime(true);

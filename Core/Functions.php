@@ -332,4 +332,13 @@ function xml_to_array($xml) {
     }
 }
 
-?>
+/**
+ * 系统报错
+ */
+function sysError($message) {
+    $html = '<div style="margin:200px auto;text-align:center;border:1px solid #DDDDDD;background-color:#f1f1f1;width:800px;height:160px;padding-top:20px;">
+    <p style="margin-top:60px; font-size:16px;">出错了(Error) : '.$message.'</p>
+</div>';
+    echo $html;
+    exit;
+}

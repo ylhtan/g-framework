@@ -17,6 +17,8 @@ return array(
     'content_type' => 'text/html',
     //默认页面编码
     'charset' => 'utf-8',
+    //是否自动启用session
+    'session_auto_start' => true,
     //是否启用memcache缓存(true为启用，false为不启用)
     'memcache_enable' => false,
     //是否启用静态页面缓存(0为不启用，30为缓存有效时间为30分钟)

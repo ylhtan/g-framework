@@ -213,13 +213,13 @@ class Dispatch {
      * 载入头信息
      */
     private function header() {
-        session_start(); //开启Session功能
+        if (C('session_auto_start')) {
+            session_start(); //开启Session功能
+        }
         $content_type = C('content_type');
         $charset = C('charset');
         header('Content-type:'.$content_type.'; charset='.$charset);
     }
-
-    
 
     /**
      * 执行调度函数
@@ -229,6 +229,9 @@ class Dispatch {
         if (C('html_cache_time') > 0) $this->read_html_cache();
         $this->importGroupBase();
         $controller_url = APP_CONTROLLER_PATH."/{$this->group_name}/{$this->module_name}Controller.php";
+        if (!file_exists($controller_url)) {
+            sysError('访问地址不存在！');
+        }
         gf_require($controller_url);
         $m = $this->module_name.'Controller';
         $a = $this->action_name;
@@ -242,6 +245,9 @@ class Dispatch {
      */
     private function importGroupBase() {
         $base_url = APP_CONTROLLER_PATH."/{$this->group_name}/{$this->group_name}BaseController.php";
+        if (!file_exists($base_url)) {
+            sysError('访问地址不存在！！');
+        }
         gf_require($base_url);
     }
 
@@ -288,5 +294,3 @@ class Dispatch {
 //页面具体执行，从这一段开始
 $D = new Dispatch();
 $D->dispatch();
-
-?>
