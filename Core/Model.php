@@ -1,6 +1,8 @@
 <?php
+
 //导入数据库操作DB类
 require('DB.class.php');
+
 /**
  * Model类
  */
@@ -16,13 +18,13 @@ class GF_Model {
     public $error;
     public $lastSql;
 
-
     //定位数据表
-    public function __construct($tableName=null) {
-        if (empty($tableName)) $tableName = substr(get_class($this),0, -5);
+    public function __construct($tableName = null) {
+        if (empty($tableName))
+            $tableName = substr(get_class($this), 0, -5);
         $this->tableName = parse_name($tableName);
         $this->db_prefix = $this->getDbPrefix();
-        $this->trueTableName = $this->db_prefix.$this->tableName;
+        $this->trueTableName = $this->db_prefix . $this->tableName;
         $this->sql_bk = $this->sql = str_replace('{table}', $this->trueTableName, $this->sql);
         //实例化DB类
         $mysql_config = getMysqlConfig();
@@ -39,15 +41,14 @@ class GF_Model {
      *
      * @param  <string> $field
      */
-    public function field ($field=null) {
-        if (empty($field) || $field=='*') {
+    public function field($field = null) {
+        if (empty($field) || $field == '*') {
             $field = '*';
-        }
-        else {
-            $field_array = explode(',' , $field);
+        } else {
+            $field_array = explode(',', $field);
             $field = '';
             foreach ($field_array as $item) {
-                $field .= '`'.$item.'`,';
+                $field .= '`' . $item . '`,';
             }
             $field = rtrim($field, ',');
         }
@@ -60,11 +61,10 @@ class GF_Model {
      *
      * @param <array> $condition
      */
-    public function where ($condition=null) {
+    public function where($condition = null) {
         if (empty($condition)) {
             $where = '';
-        }
-        else {
+        } else {
             $where = $this->parseWhere($condition);
         }
         $this->sql = str_replace('{where}', $where, $this->sql);
@@ -76,11 +76,10 @@ class GF_Model {
      *
      * @param <string> $order  查询条件
      */
-    public function order($order=null) {
+    public function order($order = null) {
         if (empty($order)) {
             $order = '';
-        }
-        else {
+        } else {
             $order = "order by {$order}";
         }
         $this->sql = str_replace('{order}', $order, $this->sql);
@@ -92,11 +91,10 @@ class GF_Model {
      *
      * @param <string> $limit
      */
-    public function limit ($limit=null) {
+    public function limit($limit = null) {
         if (empty($limit)) {
             $limit = '';
-        }
-        else {
+        } else {
             $limit = "limit {$limit}";
         }
         $this->sql = str_replace('{limit}', $limit, $this->sql);
@@ -115,14 +113,12 @@ class GF_Model {
         if ($data != false) {
             $this->sqlRevert();
             return $data;
-        }
-        else {
+        } else {
             $this->sqlRevert();
             $this->error = self::$DB->getError();
             return false;
         }
     }
-
 
     /**
      * 查询一条记录
@@ -137,8 +133,7 @@ class GF_Model {
         if ($data != false) {
             $this->sqlRevert();
             return $data[0];
-        }
-        else {
+        } else {
             $this->sqlRevert();
             $this->error = self::$DB->getError();
             return false;
@@ -159,8 +154,7 @@ class GF_Model {
         if (false == $res) {
             $this->error = '没有查询到数据';
             return false;
-        }
-        else {
+        } else {
             $row = mysql_fetch_array($res);
             return $row['count'];
         }
@@ -169,7 +163,7 @@ class GF_Model {
     /**
      * 获取数据库前缀
      */
-    private function getDbPrefix () {
+    private function getDbPrefix() {
         $mysql_config = getMysqlConfig();
         return $mysql_config['db_prefix'];
     }
@@ -180,7 +174,7 @@ class GF_Model {
      */
     public function getDbFields() {
         $dbFields = array();
-        $res = $this->query('show columns from '.$this->trueTableName);
+        $res = $this->query('show columns from ' . $this->trueTableName);
         $p = 0;
         while ($row = mysql_fetch_array($res)) {
             $dbFields[$p] = $row[0];
@@ -194,10 +188,10 @@ class GF_Model {
      *
      * @param <array> $condition 查询条件
      */
-    private function parseWhere ($condition) {
+    private function parseWhere($condition) {
         $where = 'where ';
         if (is_array($condition)) {
-            foreach ($condition as $k=>$v) {
+            foreach ($condition as $k => $v) {
                 if (is_array($v)) {
                     switch ($v[0]) {
                         case 'in':
@@ -207,29 +201,27 @@ class GF_Model {
                             $where .= "{$k} $v[0]($v[1]) and ";
                             break;
                         case 'bt':
-                            $v[1] = "'".str_replace(",", "' and '", $v[1])."'";
+                            $v[1] = "'" . str_replace(",", "' and '", $v[1]) . "'";
                             $where .= "{$k} $v[0] $v[1] and ";
                             break;
                         case 'not bt':
-                            $v[1] = "'".str_replace(",", "' and '", $v[1])."'";
+                            $v[1] = "'" . str_replace(",", "' and '", $v[1]) . "'";
                             $where .= "{$k} $v[0] $v[1] and ";
                             break;
                         default:
                             $where .= "{$k} $v[0] '$v[1]' and ";
                     }
-                }
-                else {
+                } else {
                     $where .= "{$k} = '{$v}' and ";
                 }
             }
-        }
-        else {
+        } else {
             $where .= $condition;
         }
         $where = rtrim($where, 'and ');
-        $parse_array = array('neq'=>'!=','eq'=>'=','elt'=>'<=','egt'=>'>=','lt'=>'<','gt'=>'>','bt'=>'between');
-        foreach ($parse_array as $k=>$v) {
-            $where = str_replace(' '.$k.' ', ' '.$v.' ', $where);
+        $parse_array = array('neq' => '!=', 'eq' => '=', 'elt' => '<=', 'egt' => '>=', 'lt' => '<', 'gt' => '>', 'bt' => 'between');
+        foreach ($parse_array as $k => $v) {
+            $where = str_replace(' ' . $k . ' ', ' ' . $v . ' ', $where);
         }
         return $where;
     }
@@ -237,10 +229,10 @@ class GF_Model {
     /**
      * sql语句已配置完成，没有用到的变量替换为默认
      */
-    private function endSql ($sql) {
-        $sql_array = array('field'=>'*', 'where'=>'', 'order'=>'', 'limit'=>'');
-        foreach ($sql_array as $k=>$v) {
-            $sql = str_replace('{'.$k.'}', $v, $sql);
+    private function endSql($sql) {
+        $sql_array = array('field' => '*', 'where' => '', 'order' => '', 'limit' => '');
+        foreach ($sql_array as $k => $v) {
+            $sql = str_replace('{' . $k . '}', $v, $sql);
         }
         $sql = trim($sql);
         return $sql;
@@ -255,9 +247,9 @@ class GF_Model {
         $keys = '';
         $values = '';
         $data = $this->filterDbFields($data);
-        foreach ($data as $k=>$v) {
-            $keys .= "`".$k."`,";
-            $values .= "'".$v."',";
+        foreach ($data as $k => $v) {
+            $keys .= "`" . $k . "`,";
+            $values .= "'" . $v . "',";
         }
         $keys = trim($keys, ',');
         $values = trim($values, ',');
@@ -265,7 +257,8 @@ class GF_Model {
         $sql = str_replace('{keys}', $keys, $sql);
         $sql = str_replace('{values}', $values, $sql);
         $this->lastSql = $sql;
-        if (self::$DB->execute($sql)) return mysql_insert_id();
+        if (self::$DB->execute($sql))
+            return mysql_insert_id();
         else {
             $this->error = self::$DB->getError();
             return false;
@@ -282,8 +275,8 @@ class GF_Model {
         $sql = 'update `{table}` set {values} {where}';
         $values = '';
         $data = $this->filterDbFields($data);
-        foreach ($data as $k=>$v) {
-            $values .= "`".$k."` = '".$v."',";
+        foreach ($data as $k => $v) {
+            $values .= "`" . $k . "` = '" . $v . "',";
         }
         $values = trim($values, ',');
         $sql = str_replace('{table}', $this->trueTableName, $sql);
@@ -291,7 +284,8 @@ class GF_Model {
         $where = $this->parseWhere($condition);
         $sql = str_replace('{where}', $where, $sql);
         $this->lastSql = $sql;
-        if (self::$DB->execute($sql)) return true;
+        if (self::$DB->execute($sql))
+            return true;
         else {
             $this->error = self::$DB->getError();
             return false;
@@ -303,7 +297,7 @@ class GF_Model {
      *
      * @param <array> $condition 删除条件
      */
-    public function delete($condition=null) {
+    public function delete($condition = null) {
         $sql = '{delete} from `{table}` {where}';
         $sql = str_replace('{table}', $this->trueTableName, $sql);
         $where = $this->parseWhere($condition);
@@ -323,20 +317,17 @@ class GF_Model {
         $sql = str_replace('{delete}', 'delete', $sql);
         $this->lastSql = $sql;
         if ($count > 0) {
-            if (self::$DB->execute($sql)) return true;
+            if (self::$DB->execute($sql))
+                return true;
             else {
                 $this->error = self::$DB->getError();
                 return false;
             }
-        }
-        else {
+        } else {
             $this->error = '数据库查无此条记录！';
             return false;
         }
-
     }
-
-
 
     /**
      * 执行原生态sql语句
@@ -373,13 +364,14 @@ class GF_Model {
      * @param <array> $data
      */
     private function filterDbFields($data) {
-        if (empty($data)) return '';
+        if (empty($data))
+            return '';
         $dbFields = $this->getDbFields();
-        foreach ($data as $k=>$v) {
-            if (!in_array($k, $dbFields)) unset($data[$k]);
+        foreach ($data as $k => $v) {
+            if (!in_array($k, $dbFields))
+                unset($data[$k]);
         }
         return $data;
     }
 
 }
-?>

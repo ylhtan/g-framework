@@ -28,4 +28,4 @@ return array(
     //数据缓存方式(1为文件缓存，2为使用memcache)
     'data_cache_way' => 1,
 );
-?>
+
