@@ -6,4 +6,3 @@
 define("ROOT_PATH",  realpath(dirname(__FILE__) . '/../'));
 define('APP_NAME', 'APP');
 require(ROOT_PATH."/Core/index.php");
-?>
