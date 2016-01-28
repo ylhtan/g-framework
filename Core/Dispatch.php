@@ -152,8 +152,7 @@ class Dispatch {
         $generic_domain = C('generic_domain'); //获取泛解析设置
         if ($generic_domain == false)
             return $request_uri; //没有设置泛解析，直接返回$request_uri
-            
-//获取泛解析排除设置
+        //获取泛解析排除设置
         if (!empty($generic_domain['exclude'])) {
             foreach ($generic_domain['exclude'] as $v) {
                 if ($_SERVER['HTTP_HOST'] == $v) {
