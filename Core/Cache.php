@@ -223,4 +223,3 @@ class GF_Cache {
     }
     
 }
-?>
