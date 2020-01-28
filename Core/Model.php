@@ -273,7 +273,7 @@ class GF_Model {
                             $valueArray = explode(',', $v[1]);
                             $posChar = implode(array_fill(0, count($valueArray), '?,'));
                             $posChar = trim($posChar, ',');
-                            $where .= "{$k} $v[0]({$posChar}) and ";
+                            $where .= "`{$k}` $v[0]({$posChar}) and ";
                             foreach ($valueArray as $value) {
                                 array_push($this->parameters, $value);
                             }
@@ -283,17 +283,17 @@ class GF_Model {
                             $valueArray = explode(',', $v[1]);
                             $posChar = implode(array_fill(0, count($valueArray), '? and '));
                             $posChar = trim($posChar, ' and ');
-                            $where .= "{$k} $v[0] {$posChar} and ";
+                            $where .= "`{$k}` $v[0] {$posChar} and ";
                             foreach ($valueArray as $value) {
                                 array_push($this->parameters, $value);
                             }
                             break;
                         default: //比如：name like %keyword%
-                            $where .= "{$k} $v[0] ? and ";
+                            $where .= "`{$k}` $v[0] ? and ";
                             array_push($this->parameters, $v[1]);
                     }
                 } else {
-                    $where .= "{$k} = ? and ";
+                    $where .= "`{$k}` = ? and ";
                     array_push($this->parameters, $v);
                 }
             }
