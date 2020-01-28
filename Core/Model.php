@@ -561,6 +561,9 @@ class GF_Model {
      * #return ： <string> {最后执行sql语句}
      */
     public function getLastSql() {
+        foreach ($this->lastParameters as $v) {
+            $this->lastSql = preg_replace('/\?/', $v, $this->lastSql, 1);
+        }
         return $this->lastSql;
     }
 
