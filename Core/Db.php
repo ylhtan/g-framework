@@ -1,7 +1,7 @@
 <?php
 
 /**
- * #user ： qiujunli
+ * #user ： Johnny.qiu
  * #date ： 2017-04-10T15:06:58+0800
  * #desc ： 数据库操作类
  */
@@ -12,7 +12,7 @@ class GF_Db {
 
 
     /**
-     * #user ： qiujunli
+     * #user ： Johnny.qiu
      * #date ： 2017-04-10T15:06:58+0800
      * #desc ： 连接Mysql
      */
@@ -142,7 +142,7 @@ class GF_Db {
 
 
     /**
-     * #user ： qiujunli
+     * #user ： Johnny.qiu
      * #date ： 2017-04-07T18:04:05+0800
      * #desc ： 获取mysqli实例
      */
@@ -152,7 +152,7 @@ class GF_Db {
 
 
     /**
-     * #user ： qiujunli
+     * #user ： Johnny.qiu
      * #date ： 2017-04-10T16:13:55+0800
      * #desc ： 返回错误
      */

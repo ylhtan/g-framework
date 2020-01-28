@@ -250,7 +250,7 @@ class Dispatch {
     }
 
     /**
-     * #user ： qiujunli
+     * #user ： Johnny.qiu
      * #date ： 2017-04-01T11:25:01+0800
      * #desc ： 过滤内容
      */
