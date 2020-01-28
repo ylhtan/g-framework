@@ -186,11 +186,11 @@ class GF_View {
         $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1) && !empty(\$\\1)) {?>', $content); //匹配格式如：<notempty name="username"></empty>
         $content = preg_replace('/<notempty name="([a-zA-Z][a-zA-Z0-9_-]*)\.([a-zA-Z][a-zA-Z0-9_-]*)">/', '<?php if (isset(\$\\1["\\2"]) && !empty(\$\\1["\\2"])) {?>', $content); //匹配格式如：<notempty name="user.name"></empty>
         $content = preg_replace('/{__RUNTIME__}/', '<?php 
-        global $START_TIME;
-        $END_TIME = microtime(true);
-        $runtime = round(($END_TIME - $START_TIME) * 1000, 1);
-		echo $runtime;
-	    ?>', $content); // 仅匹配{__RUNTIME__}
+        $start_time = Request::getData("sys", "start_time");
+        $end_time = microtime(true);
+        $runtime = round(($end_time - $start_time) * 1000, 1);
+        echo $runtime;
+        ?>', $content); // 仅匹配{__RUNTIME__}
         $content = preg_replace('/{(__[A-Z][A-Z]*__)}/', '<?php echo \\1;?>', $content); // 通配格式如：{__ROOT__} 注意：此项要放在__RUNTIME__之后
         $content = preg_replace('/{\%([a-zA-Z][a-zA-Z0-9_-]*)}/', '<?php echo \\1;?>', $content); //适用于已定义的常量和变量，通配：{%APP_NAME}
         return $content;
@@ -251,7 +251,7 @@ class GF_View {
     private function saveTemplateCache($fileName, $content) {
         $groupDirPath = dirname($fileName);
         if (!is_dir($groupDirPath))
-            mkdir($groupDirPath);
+            mkdir($groupDirPath, 0777);
         if (file_put_contents($fileName, $content) > 0)
             return true;
         else

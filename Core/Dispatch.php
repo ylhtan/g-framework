@@ -20,7 +20,7 @@ class Dispatch {
         $this->url_separator = C('url_separator');
         $this->url_model = C('url_model');
         $this->_parseUrl(); //解析URL获得参数
-        $this->group_ban(); //泛解析分组访问权限过滤
+        $this->groupExclude(); //泛解析分组访问权限过滤
         $this->define_GF_constant(); //定义系统常量
         $this->groupConfigMerge(); //合并配置文件
         $this->header(); //载入头信息
@@ -35,19 +35,29 @@ class Dispatch {
      * 4. Nginx服务器 PATHINFO模式
      */
     private function _parseUrl() {
-        if ($this->url_model == 1)
-            $this->_parse1();
-        else if ($this->url_model == 3)
+        //判断是否为cli模式
+        if (isset($_SERVER['argv']) && count($_SERVER['argv'])) {
+            $this->url_model = 3;
             $this->_parse3();
-        else
-            $this->_parse2();
+        } else {
+            if ($this->url_model == 1) {
+                $this->_parse1();
+            } else {
+                $this->_parse2();
+            }
+        }
+        
         //将g、m首字母小写转为大写
         $this->group_name = ucfirst($this->group_name);
         $this->module_name = ucfirst($this->module_name);
+
         //将g、m、a提升为全局变量
-        $_GET['g'] = $this->group_name;
-        $_GET['m'] = $this->module_name;
-        $_GET['a'] = $this->action_name;
+        Request::setData('sys', 'g', $this->group_name);
+        Request::setData('sys', 'm', $this->module_name);
+        Request::setData('sys', 'a', $this->action_name);
+        // $_GET['g'] = $this->group_name;
+        // $_GET['m'] = $this->module_name;
+        // $_GET['a'] = $this->action_name;
     }
 
     /**
@@ -172,7 +182,7 @@ class Dispatch {
     /**
      * 被泛解析排除的域名无权访问泛解析分组
      */
-    private function group_ban() {
+    private function groupExclude() {
         $generic_domain = C('generic_domain'); //获取泛解析设置
         if ($generic_domain == false)
             return true; //没有设置泛解析，返回true
@@ -225,6 +235,37 @@ class Dispatch {
     }
 
     /**
+     * 过滤请求数据
+     */
+    private function checkInput() {
+        foreach ($_GET as $v) {
+            $this->checkBadWords($v);
+        }
+        foreach ($_POST as $v) {
+            $this->checkBadWords($v);
+        }
+        foreach ($_REQUEST as $v) {
+            $this->checkBadWords($v);
+        }
+    }
+
+    /**
+     * #user ： qiujunli
+     * #date ： 2017-04-01T11:25:01+0800
+     * #desc ： 过滤内容
+     */
+    private function checkBadWords($string) {
+        $keyword = "create|database|drop|table|select|insert|update|delete|grant|\"|'|;|\.\.\/|\.\/|union|and|union|order|or|into|load_file|outfile";
+        $keywordArray = explode('|', $keyword);
+        foreach ($keywordArray as $v) {
+            if (strpos($string, $v) !== false) {
+                echo "Contain sensitive words!";
+                exit;
+            }
+        }
+    }
+
+    /**
      * 执行调度函数
      * 执行控制器对应操作
      */
@@ -239,6 +280,7 @@ class Dispatch {
         gf_require($controller_url);
         $m = $this->module_name . 'Controller';
         $a = $this->action_name;
+
         $Controller = new $m;
         $Controller->$a();
     }

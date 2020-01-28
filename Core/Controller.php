@@ -17,14 +17,14 @@ class GF_Controller {
      */
 
     public function __construct() {
-        $this->group_name = $_GET['g'];
-        $this->module_name = $_GET['m'];
-        $this->action_name = $_GET['a'];
+        $this->group_name = Request::getData('sys', 'g');
+        $this->module_name = Request::getData('sys', 'm');
+        $this->action_name = Request::getData('sys', 'a');
         $this->View = new GF_View($this->group_name, $this->module_name, $this->action_name);
         //统计框架执行时间
-        global $CORE_START_TIME;
-        $CORE_END_TIME = microtime(true);
-        define('__CORETIME__', round(($CORE_END_TIME - $CORE_START_TIME) * 1000, 1));
+        $core_start_time = Request::getData('sys', 'core_start_time');
+        $core_end_time = microtime(true);
+        define('__CORETIME__', round(($core_end_time - $core_start_time) * 1000, 1));
         //统计框架执行时间结束 ，之后便是用户业务开始执行
         $this->_initialize();
     }

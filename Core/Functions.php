@@ -8,6 +8,14 @@ $app_config = gf_require_get(APP_CONFIG_FILE);  //项目自有配置
 
 $gf_config = array_merge($gf_config, $app_config);  //项目配置覆盖系统默认配置（分组配置是在解析分组后执行覆盖）
 
+if (C('debug')) {
+    ini_set("display_errors", "on");
+    error_reporting(E_ALL ^ E_NOTICE);
+} else {
+    ini_set("display_errors", "off");
+    error_reporting(0);
+}
+
 /**
  * 引入数据表缓存设置文件，在memcache_enable = true时有效
  */
@@ -135,7 +143,7 @@ function D($modelPath) {
  * 实例化GF_Model类
  * @param <string> $tableName 表名 （不含表前缀）
  */
-function M($tableName = null) {
+function M($tableName = '') {
     return new GF_Model($tableName);
 }
 
@@ -193,7 +201,15 @@ function getFileSuffix($filePath) {
  */
 function switch_mysql($mysql_config_name) {
     C('default_mysql_config', $mysql_config_name);
-    mysql_close();
+    GF_Model::initDB();
+}
+
+/**
+ * 关闭Mysql连接
+ * 
+ */
+function close_mysql() {
+    GF_Model::initDB();
 }
 
 /**
@@ -339,6 +355,19 @@ function sysError($message) {
     echo $html;
     exit;
 }
+
+function showMessage($message,$url,$timeout=1) {
+    $html = '<div style="margin:200px auto;text-align:center;border:1px solid #DDDDDD;background-color:#f1f1f1;width:800px;height:160px;
+        padding-top:20px;padding-bottom:10px;padding-left:20px;padding-right:20px;">
+    <p style="margin-top:60px; font-size:16px;">信息 : ' . $message . '</p>
+</div>';
+    echo $html;
+
+    header('Refresh:'.$timeout.';url=' . $url);
+
+    exit;
+}
+
 
 /**
  * 系统报错（不含中文）
