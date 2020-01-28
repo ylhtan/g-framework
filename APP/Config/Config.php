@@ -28,10 +28,5 @@ return array(
         'db_name'	=>	'',
         'db_prefix' =>  'tbprefix_',
     ),
-    /**
-     * 1 文件数据缓存
-     * 2 memcached数据缓存，需定义memcached配置
-     */
-    'data_cache_way' => 1,
 );
-?>
+
