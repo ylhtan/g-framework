@@ -24,6 +24,10 @@ class GF_Db {
         $port = $mysqlConfig['port'];
         $db_name = $mysqlConfig['db_name'];
 
+        if (!class_exists('mysqli')) {
+            die('当前环境没有安装php的mysqli扩展');
+        }
+
         $this->mysqli = @new mysqli($host, $user, $pwd, $db_name, $port);
         if ($this->mysqli->connect_error) {
             die('connection failed: ' . $this->mysqli->connect_error);
