@@ -32,7 +32,7 @@ class GF_Db {
         if ($this->mysqli->connect_error) {
             die('connection failed: ' . $this->mysqli->connect_error);
         } else {
-            $this->mysqli->set_charset("utf8mb4");
+            $this->mysqli->set_charset("utf8");
         }
         return true;
     }
