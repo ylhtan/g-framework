@@ -24,8 +24,8 @@ require(APP_CONFIG_PATH.'/env.php');
 define('APP_CONFIG_FILE', APP_PATH.'/Config/Config.'.ENV.'.php');
 define('GF_CONFIG_FILE', ROOT_PATH.'/Core/Config.php');
 define('LIBRARY_PATH', APP_PATH.'/Library');
-define('GF_VERSION', '1.1.0'); //框架版本号
-define('GF_RELEASE', '2017年04月05日'); //框架发布时间
+define('GF_VERSION', '1.2.0'); //框架版本号
+define('GF_RELEASE', '2020年01月31日'); //框架发布时间
 
 require(ROOT_PATH.'/Core/Functions.php');
 require(ROOT_PATH.'/Core/Controller.php');
