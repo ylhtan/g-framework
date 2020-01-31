@@ -214,7 +214,7 @@ class Dispatch {
      * 完成分组配置对项目配置的覆盖
      */
     private function groupConfigMerge() {
-        $group_config_path = APP_CONFIG_PATH . '/' . $this->group_name . '.Config.php';
+        $group_config_path = APP_CONFIG_PATH . '/' . $this->group_name . '.Config.'.ENV.'.php';
         if (file_exists($group_config_path)) {
             $group_config = require($group_config_path);
             global $gf_config;
