@@ -11,7 +11,7 @@ require('Db.php');
 class GF_Model {
 
     //此sql用于select、find、count方法的连查
-    protected $sql = "select {field} from `{table}` {where} {order} {limit}";
+    protected $sql = "select {field} from `{table}` {where} {group} {order} {limit}";
     protected $sql_bk = ''; //用作$sql语句改变后的恢复
     protected $tableName;
     protected $trueTableName;
@@ -66,7 +66,7 @@ class GF_Model {
     /**
      * #user   ： Johnny.Qiu
      * #date   ： 2017-04-11T13:59:38+0800
-     * #desc   ： 要查询的字段
+     * #desc   ： 要查询的数据库原生字段，不支持聚合函数
      * #param  ： <string> $field {例如："id,cname,ordercode"}
      * #return ： <object> {返回当前对象}
      */
@@ -77,7 +77,7 @@ class GF_Model {
             $field_array = explode(',', $field);
             $field = '';
             foreach ($field_array as $item) {
-                $field .= '`' . $item . '`,';
+                $field .= '`' . trim($item) . '`,';
             }
             $field = rtrim($field, ',');
         }
@@ -118,6 +118,24 @@ class GF_Model {
             $order = "order by {$order}";
         }
         $this->sql = str_replace('{order}', $order, $this->sql);
+        return $this;
+    }
+
+
+    /**
+     * #user   ： Johnny.Qiu
+     * #date   ： 2017-04-11T15:34:13+0800
+     * #desc   ： 分组
+     * #param  ： <string> {排序字符串，如：id desc}
+     * #return ： <object> {返回当前对象}
+     */
+    public function group($group = '') {
+        if (empty($group)) {
+            $group = '';
+        } else {
+            $group = "group by {$group}";
+        }
+        $this->sql = str_replace('{group}', $group, $this->sql);
         return $this;
     }
 
@@ -317,7 +335,7 @@ class GF_Model {
      * #return ： <string> {sql语句}
      */
     private function endSql($sql) {
-        $sql_array = array('field' => '*', 'where' => '', 'order' => '', 'limit' => '');
+        $sql_array = array('field' => '*', 'where' => '', 'order' => '', 'group' => '', 'limit' => '');
         foreach ($sql_array as $k => $v) {
             $sql = str_replace('{' . $k . '}', $v, $sql);
         }
@@ -613,6 +631,37 @@ class GF_Model {
                 unset($data[$k]);
         }
         return $data;
+    }
+
+
+    /**
+     * 开启事务
+     * @return type
+     */
+    public function startTrans() {
+        $t1 = self::$Db->_execute('SET AUTOCOMMIT=0');  //设置为不自动提交，因为MYSQL默认立即执行
+        $t2 = self::$Db->_execute('BEGIN'); //开始事务定义
+        return $t1 && $t2;
+    }
+
+    /**
+     * 提交事务
+     * @return type
+     */
+    public function commit() {
+        $t1 = self::$Db->_execute('COMMIT'); //提交事务
+        $t2 = self::$Db->_execute('SET AUTOCOMMIT=1');
+        return $t1 && $t2;
+    }
+
+    /**
+     * 回滚事务
+     * @return type
+     */
+    public function rollback() {
+        $t1 = self::$Db->_execute('ROLLBACK');  //判断当执行失败时回滚
+        $t2 = self::$Db->_execute('SET AUTOCOMMIT=1');
+        return $t1 && $t2;
     }
 
 }
