@@ -11,7 +11,7 @@ require('Db.php');
 class GF_Model {
 
     //此sql用于select、find、count方法的连查
-    protected $sql = "select {field} from `{table}` {where} {group} {order} {limit}";
+    protected $sql = "select {field} from `{table}`{where}{group}{order}{limit}";
     protected $sql_bk = ''; //用作$sql语句改变后的恢复
     protected $tableName;
     protected $trueTableName;
@@ -115,7 +115,7 @@ class GF_Model {
         if (empty($order)) {
             $order = '';
         } else {
-            $order = "order by {$order}";
+            $order = " order by {$order}";
         }
         $this->sql = str_replace('{order}', $order, $this->sql);
         return $this;
@@ -133,7 +133,7 @@ class GF_Model {
         if (empty($group)) {
             $group = '';
         } else {
-            $group = "group by {$group}";
+            $group = " group by {$group}";
         }
         $this->sql = str_replace('{group}', $group, $this->sql);
         return $this;
@@ -151,7 +151,7 @@ class GF_Model {
         if (empty($limit)) {
             $limit = '';
         } else {
-            $limit = "limit {$limit}";
+            $limit = " limit {$limit}";
         }
         $this->sql = str_replace('{limit}', $limit, $this->sql);
         return $this;
@@ -281,7 +281,7 @@ class GF_Model {
      * #return ： <mix> {解析后的条件}
      */
     private function parseWhere($condition) {
-        $where = 'where ';
+        $where = ' where ';
         if (is_array($condition)) {
             foreach ($condition as $k => $v) {
                 if (is_array($v)) {
