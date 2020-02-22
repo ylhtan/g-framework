@@ -358,7 +358,7 @@ class GF_Model {
         $data = $this->filterDbFields($data);
         foreach ($data as $k => $v) {
             $keys .= "`" . $k . "`,";
-            $values .= "'" . $this->escapeString($v) . "',";
+            $values .= "'" . addslashes($v) . "',";
         }
 
         $keys = trim($keys, ',');
@@ -399,7 +399,7 @@ class GF_Model {
                 if (!$getKey) {
                     $keys .= "`" . $k . "`,";
                 }
-                $itemValues .= "'" . $v . "',";
+                $itemValues .= "'" . addslashes($v) . "',";
             }
             $getKey = true;
             $itemValues = trim($itemValues, ',');
@@ -425,20 +425,6 @@ class GF_Model {
 
 
     /**
-     * 字段名分析
-     * @access protected
-     * @param string $key
-     * @return string
-     */
-    protected function parseKey(&$key) {
-        return $key;
-    }
-
-    public function escapeString($str) {
-        return addslashes($str);
-    }
-
-    /**
      * #user   ： Johnny.Qiu
      * #date   ： 2017-04-11T12:00:49+0800
      * #desc   ： 按条件更新数据
@@ -450,21 +436,14 @@ class GF_Model {
         $sql = 'update `{table}` set {values} {where}';
         $values = '';
         $data = $this->filterDbFields($data);
-        /*
+        
         foreach ($data as $k => $v) {
-            $values .= "`" . $k . "` = '" . $v . "',";
-        }
-        */
-        foreach ($data as $key=>$val){
-            if(is_array($val) && 'exp' == $val[0]){
-                $set[]  =   $this->parseKey($key).'='.'\''.$val[1].'\'';
-            }elseif(is_null($val)){
-                $set[]  =   $this->parseKey($key).'=NULL';
-            }elseif(is_scalar($val)) {
-                $set[]  =   $this->parseKey($key).'='.'\''.$this->escapeString($val).'\'';
+            if (is_null($v)) {
+                $values .= "`" . $k . "` = NULL,";
+            } else {
+                $values .= "`" . $k . "` = '" . addslashes($v) . "',";
             }
         }
-        $values  = implode(',',$set);
 
         $values = trim($values, ',');
         $sql = str_replace('{table}', $this->trueTableName, $sql);
